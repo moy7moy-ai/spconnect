@@ -21,7 +21,10 @@ return [
 
     'allowed_origins' => ['http://localhost:3000', 'http://localhost:3001'],
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => [
+        '#^https://.*\.vercel\.app$#',
+        '#^https://.*\.medramarketing\.com$#',
+    ],
 
     'allowed_headers' => ['*'],
 
