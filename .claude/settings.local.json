@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php --version)",
+      "Bash(composer --version)",
+      "Bash(npm --version)",
+      "Bash(mysql --version)",
+      "Bash(redis-server --version)",
+      "Read(//Users/medramkt/**)",
+      "Bash(brew install *)",
+      "Bash(brew services *)",
+      "Bash(npx create-next-app@14 *)",
+      "Bash(mysql -u root -e \"CREATE DATABASE IF NOT EXISTS auth_multitenant CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;\")",
+      "Bash(npx tsc *)",
+      "Bash(curl -sv -X POST http://localhost:8000/api/login -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{\"email\":\"superadmin@auth.local\",\"password\":\"password\"}')",
+      "Bash(pkill -f \"php artisan serve\")",
+      "Bash(mysql -u root auth_multitenant -e \"SELECT id, nombre, activo FROM tenants;\")",
+      "Bash(mysql -u root auth_multitenant -e \"SELECT id, nombre, email, perfil, tenant_id FROM users;\")",
+      "Bash(git add *)",
+      "Bash(git -C /Users/medramkt/Documents/AUTH remote set-url origin https://github.com/moy7moy-ai/auth-multitenant.git)",
+      "Bash(git -C /Users/medramkt/Documents/AUTH remote -v)",
+      "Bash(git -C /Users/medramkt/Documents/AUTH log --oneline)",
+      "Bash(git -C /Users/medramkt/Documents/AUTH status)",
+      "Bash(git reset *)",
+      "Bash(git commit -m 'docs: SETUP.md expandido con personalización por proyecto, módulos, roles, Docker y tabla de rutas API *)",
+      "Bash(git push *)",
+      "Bash(rsync -a --exclude=.git --exclude=backend/vendor --exclude=backend/.env --exclude=backend/storage/logs/*.log --exclude=frontend/node_modules --exclude=frontend/.env.local --exclude=frontend/.next /Users/medramkt/Documents/AUTH/ /Users/medramkt/Documents/SPConnect/)"
+    ]
+  }
+}
