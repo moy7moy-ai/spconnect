@@ -1,6 +1,6 @@
 export const THEME = {
-  primaryColor: '#000000',
+  primaryColor: '#F7941D',
   logo: '/logo.svg',
-  companyName: 'Mi Empresa',
-  portalName: 'Portal del Cliente',
+  companyName: 'SPConnet',
+  portalName:  'Portal SPConnet',
 } as const
