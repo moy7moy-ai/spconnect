@@ -59,7 +59,7 @@ class UserController extends Controller
                 'html'    => $html,
             ]);
         } catch (\Throwable $e) {
-            \Log::warning('Welcome email failed: ' . $e->getMessage());
+            \Log::error('Welcome email failed: ' . $e->getMessage());
         }
 
         AccessLog::create([
