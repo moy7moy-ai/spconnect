@@ -12,7 +12,9 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 COPY . .
 
-RUN composer install --no-dev --optimize-autoloader --no-interaction && \
+RUN composer install --no-dev --no-interaction && \
+    composer require resend/resend-laravel --no-dev --no-interaction && \
+    composer dump-autoload --optimize && \
     chmod -R 775 storage bootstrap/cache && \
     chmod +x start.sh
 
