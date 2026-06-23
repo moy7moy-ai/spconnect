@@ -10,8 +10,8 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Resend;
 
 class UserController extends Controller
 {
@@ -51,7 +51,13 @@ class UserController extends Controller
         ]);
 
         try {
-            Mail::to($user->email)->send(new WelcomeUserMail($user->load('tenant'), $plainPassword));
+            $html = (new WelcomeUserMail($user->load('tenant'), $plainPassword))->render();
+            Resend::client(config('services.resend.key'))->emails->send([
+                'from'    => config('mail.from.address'),
+                'to'      => [$user->email],
+                'subject' => 'Bienvenido — tus credenciales de acceso',
+                'html'    => $html,
+            ]);
         } catch (\Throwable $e) {
             \Log::warning('Welcome email failed: ' . $e->getMessage());
         }
@@ -127,7 +133,13 @@ class UserController extends Controller
         $user->update(['password' => Hash::make($plainPassword)]);
 
         try {
-            Mail::to($user->email)->send(new PasswordResetByAdminMail($user->load('tenant'), $plainPassword));
+            $html = (new PasswordResetByAdminMail($user->load('tenant'), $plainPassword))->render();
+            Resend::client(config('services.resend.key'))->emails->send([
+                'from'    => config('mail.from.address'),
+                'to'      => [$user->email],
+                'subject' => 'Restablecimiento de contraseña',
+                'html'    => $html,
+            ]);
         } catch (\Throwable $e) {
             \Log::warning('Reset password email failed: ' . $e->getMessage());
         }
