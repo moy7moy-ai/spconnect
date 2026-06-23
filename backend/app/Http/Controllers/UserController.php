@@ -50,7 +50,11 @@ class UserController extends Controller
             'activo'    => $request->activo ?? true,
         ]);
 
-        Mail::to($user->email)->send(new WelcomeUserMail($user->load('tenant'), $plainPassword));
+        try {
+            Mail::to($user->email)->send(new WelcomeUserMail($user->load('tenant'), $plainPassword));
+        } catch (\Throwable $e) {
+            \Log::warning('Welcome email failed: ' . $e->getMessage());
+        }
 
         AccessLog::create([
             'user_id'   => $request->user()->id,
@@ -122,7 +126,11 @@ class UserController extends Controller
         $plainPassword = Str::random(12);
         $user->update(['password' => Hash::make($plainPassword)]);
 
-        Mail::to($user->email)->send(new PasswordResetByAdminMail($user->load('tenant'), $plainPassword));
+        try {
+            Mail::to($user->email)->send(new PasswordResetByAdminMail($user->load('tenant'), $plainPassword));
+        } catch (\Throwable $e) {
+            \Log::warning('Reset password email failed: ' . $e->getMessage());
+        }
 
         AccessLog::create([
             'user_id'   => $request->user()->id,
