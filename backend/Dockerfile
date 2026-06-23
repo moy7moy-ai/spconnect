@@ -13,8 +13,9 @@ WORKDIR /app
 COPY . .
 
 RUN composer install --no-dev --optimize-autoloader --no-interaction && \
-    chmod -R 775 storage bootstrap/cache
+    chmod -R 775 storage bootstrap/cache && \
+    chmod +x start.sh
 
 EXPOSE 8000
 
-CMD until php artisan migrate --force --seed 2>&1; do echo "DB not ready, retrying..."; sleep 5; done && php artisan config:cache && php artisan route:cache && php artisan serve --host=0.0.0.0 --port=8000
+CMD ["sh", "start.sh"]
