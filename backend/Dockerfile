@@ -1,10 +1,8 @@
 FROM php:8.4-cli-alpine
 
-RUN apk add --no-cache \
-    curl zip unzip git \
-    oniguruma-dev libxml2-dev libzip-dev \
-    mysql-client && \
-    docker-php-ext-install pdo pdo_mysql mbstring xml zip bcmath tokenizer
+RUN apk add --no-cache curl zip unzip git oniguruma-dev libxml2-dev libzip-dev
+
+RUN docker-php-ext-install pdo pdo_mysql mbstring xml zip bcmath tokenizer
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
