@@ -31,7 +31,7 @@ export default function ConfirmDialog({
   useEffect(() => {
     const el = dialogRef.current
     if (!el) return
-    open ? el.showModal() : el.close()
+    if (open) { el.showModal() } else { el.close() }
   }, [open])
 
   if (!open) return null
