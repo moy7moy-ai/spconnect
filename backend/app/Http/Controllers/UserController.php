@@ -10,8 +10,8 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
-use Resend;
 
 class UserController extends Controller
 {
@@ -51,17 +51,17 @@ class UserController extends Controller
         ]);
 
         try {
-            $apiKey = config('services.resend.key');
-            $from   = config('mail.from.address');
-            \Log::error("Resend debug — key: " . substr((string)$apiKey, 0, 8) . " from: $from to: {$user->email}");
-            $html   = (new WelcomeUserMail($user->load('tenant'), $plainPassword))->render();
-            $result = Resend::client($apiKey)->emails->send([
-                'from'    => $from,
-                'to'      => [$user->email],
-                'subject' => 'Bienvenido — tus credenciales de acceso',
-                'html'    => $html,
-            ]);
-            \Log::error("Resend result: " . json_encode($result));
+            $html     = (new WelcomeUserMail($user->load('tenant'), $plainPassword))->render();
+            $response = Http::withToken(config('services.resend.key'))
+                ->post('https://api.resend.com/emails', [
+                    'from'    => config('mail.from.address'),
+                    'to'      => [$user->email],
+                    'subject' => 'Bienvenido — tus credenciales de acceso',
+                    'html'    => $html,
+                ]);
+            if (! $response->successful()) {
+                \Log::error('Resend API error: ' . $response->body());
+            }
         } catch (\Throwable $e) {
             \Log::error('Welcome email failed: ' . $e->getMessage());
         }
@@ -137,15 +137,19 @@ class UserController extends Controller
         $user->update(['password' => Hash::make($plainPassword)]);
 
         try {
-            $html = (new PasswordResetByAdminMail($user->load('tenant'), $plainPassword))->render();
-            Resend::client(config('services.resend.key'))->emails->send([
-                'from'    => config('mail.from.address'),
-                'to'      => [$user->email],
-                'subject' => 'Restablecimiento de contraseña',
-                'html'    => $html,
-            ]);
+            $html     = (new PasswordResetByAdminMail($user->load('tenant'), $plainPassword))->render();
+            $response = Http::withToken(config('services.resend.key'))
+                ->post('https://api.resend.com/emails', [
+                    'from'    => config('mail.from.address'),
+                    'to'      => [$user->email],
+                    'subject' => 'Restablecimiento de contraseña',
+                    'html'    => $html,
+                ]);
+            if (! $response->successful()) {
+                \Log::error('Resend API error: ' . $response->body());
+            }
         } catch (\Throwable $e) {
-            \Log::warning('Reset password email failed: ' . $e->getMessage());
+            \Log::error('Reset password email failed: ' . $e->getMessage());
         }
 
         AccessLog::create([
